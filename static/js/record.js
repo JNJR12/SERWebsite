@@ -50,6 +50,7 @@ document.getElementById('startStopRecording').addEventListener('click', function
     }
 });
 
+
 function setupStartButton() {
     const startButton = document.getElementById('startStopRecording');
     startButton.textContent = 'Start Recording'; // Reset button text
@@ -65,10 +66,9 @@ function uploadAudio(audioBlob) {
     updateUploadStatus('Uploading...', 'text-blue-500');
 
     fetch('/record', { method: 'POST', body: formData })
-
         .then(response => {
             if (response.ok) {
-                return response.text();
+                return response.json();
             } else {
                 throw new Error('Network response was not ok.');
             }
@@ -77,7 +77,9 @@ function uploadAudio(audioBlob) {
             console.log('Upload and processing successful. Data saved to:', data);
             updateUploadStatus('Processing complete. Data saved.', 'text-green-500');
             // If you want to fetch and display the saved JSON data, you can make another fetch request here using 'data' as the URL
-            document.getElementById('phpOutput').textContent = data
+            // document.getElementById('phpOutput').textContent = data
+            sessionStorage.setItem('latestFile', data.filename);
+            // predictEmotion(data.filename);
         })
         
         .catch(error => {
@@ -85,6 +87,77 @@ function uploadAudio(audioBlob) {
             updateUploadStatus('Upload failed. Please try again.', 'text-red-500');
             // Handle upload errors
         });
+}
+
+document.getElementById('predictButton').addEventListener('click', function() {
+    const filename = sessionStorage.getItem('latestFile');
+    if (!filename) {
+        console.error('No file to predict.');
+        return;
+    }
+    predictEmotion(filename);
+});
+
+let emotionChart; // Keep track of the chart instance
+
+function predictEmotion(filename) {
+    updatePredictionStatus('Predicting...', 'text-blue-500')
+    fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: filename })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Prediction failed.');
+        return response.json();
+    })
+    .then(data => {
+        updatePredictionStatus('Prediction complete.', 'text-green-500');
+
+        // Update the prediction result text
+        document.getElementById('predictionResult').textContent = 'Predicted Emotion: ' + data.predicted_emotion;
+
+        // Assuming 'data.probabilities' is your array of probabilities
+        const ctx = document.getElementById('emotionChart').getContext('2d');
+        const labels = ['neutral', 'happy', 'sad', 'angry', 'fear', 'disgust', 'surprised']; // Use the same labels as in your model
+        const color = 'rgb(75, 192, 192)'; // Example color, choose what you prefer
+
+        // Destroy the previous chart instance if it exists
+        if (emotionChart) emotionChart.destroy();
+
+        emotionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Probability',
+                    data: data.probabilities, // This should come from your prediction response
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        updatePredictionStatus('Prediction failed. Please try again.', 'text-red-500');
+    });
+}
+
+function updatePredictionStatus(message, textColorClass) {
+    const statusDiv = document.getElementById('predictionStatus');
+    if (statusDiv) {
+        statusDiv.textContent = message;
+        statusDiv.className = textColorClass;
+    }
 }
 
 function updateUploadStatus(message, textColorClass) {
