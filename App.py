@@ -41,28 +41,32 @@ def preprocess_audio(file_path, frame_length=2048, hop_length=512, total_length 
     # Transform the audio file to np.array of samples
     normal_x = np.array(normalizedsound.get_array_of_samples(), dtype = 'float32')
     xt, index = librosa.effects.trim(normal_x, top_db=30)
-    # padded_x = np.pad(xt, (0, 173056-len(xt)), 'constant')
-    if len(xt) < total_length:
-          padded_x = np.pad(xt, (0, total_length - len(xt)), 'constant')
-    else:
-          padded_x = xt[:total_length]  # Truncate the signal if it's longer than total_length
-    # Noise reduction
-    final_x = nr.reduce_noise(padded_x, sr=sr)
+    snippets = []
+    start = 0
+    while start < len(xt):
+        end = min(start + total_length, len(xt))
+        snippet = xt[start:end]
+        if len(snippet) < total_length:
+            snippet = np.pad(snippet, (0, total_length - len(snippet)), 'constant')
+        # Noise reduction
+        final_x = nr.reduce_noise(snippet, sr=sr)
 
 
-    f1 = librosa.feature.rms(y = final_x, frame_length=frame_length, hop_length=hop_length, center=True, pad_mode='reflect').T # Energy - Root Mean Square
-    f2 = librosa.feature.zero_crossing_rate(final_x, frame_length=frame_length, hop_length=hop_length,center=True).T # ZCR
-    f3 = librosa.feature.mfcc(y = final_x, sr=sr, S=None, n_mfcc=40, hop_length = hop_length).T # MFCC
+        f1 = librosa.feature.rms(y = final_x, frame_length=frame_length, hop_length=hop_length, center=True, pad_mode='reflect').T # Energy - Root Mean Square
+        f2 = librosa.feature.zero_crossing_rate(final_x, frame_length=frame_length, hop_length=hop_length,center=True).T # ZCR
+        f3 = librosa.feature.mfcc(y = final_x, sr=sr, S=None, n_mfcc=40, hop_length = hop_length).T # MFCC
 
-    # f1 = librosa.feature.rms(y=final_x, frame_length=frame_length, hop_length=hop_length) # Energy - Root Mean Square
-    # f2 = librosa.feature.zero_crossing_rate(y=final_x , frame_length=frame_length, hop_length=hop_length, center=True) # ZCR
-    # f3 = librosa.feature.mfcc(y=final_x, sr=sr, n_mfcc=13, hop_length = hop_length) # MFCC
+        # f1 = librosa.feature.rms(y=final_x, frame_length=frame_length, hop_length=hop_length) # Energy - Root Mean Square
+        # f2 = librosa.feature.zero_crossing_rate(y=final_x , frame_length=frame_length, hop_length=hop_length, center=True) # ZCR
+        # f3 = librosa.feature.mfcc(y=final_x, sr=sr, n_mfcc=13, hop_length = hop_length) # MFCC
 
-    X = np.concatenate((f1, f2, f3), axis = 1)
+        X = np.concatenate((f1, f2, f3), axis = 1)
 
-    X_3D = np.expand_dims(X, axis=0)
+        X_3D = np.expand_dims(X, axis=0)
+        snippets.append(X_3D)
+        start += total_length
 
-    return X_3D
+    return snippets
 
 model = load_model()
 
