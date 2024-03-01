@@ -22,7 +22,7 @@ def allowed_file(filename):
 
 def preprocess_audio(file_path, frame_length=2048, hop_length=512, total_length = 173056):
     '''
-    A process to an audio .wav file before execcuting a prediction.
+    A process to an audio .wav file before executing a prediction.
       Arguments:
       - file_path - The system path to the audio file.
       - frame_length - Length of the frame over which to compute the speech features. default: 2048
