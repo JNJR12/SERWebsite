@@ -21,10 +21,10 @@ document.getElementById('uploadBtn').addEventListener('click', function() {
             console.log('Upload successful:', data.filename);
             const audioPlayer = document.getElementById('audioPlayback');
             audioPlayer.src = URL.createObjectURL(audioFile);
-            audioPlayer.classList.remove('hidden'); // Show the audio player
+            audioPlayer.classList.remove('d-none'); // Show the audio player
             
             const predictButton = document.getElementById('predictBtn');
-            predictButton.classList.remove('hidden'); // Show the predict button
+            predictButton.classList.remove('d-none'); // Show the predict button
             
             sessionStorage.setItem('latestFile', data.filename);
         })

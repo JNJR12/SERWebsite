@@ -4,11 +4,11 @@ import numpy as np
 import logging
 
 # Path to your model and weights files
-# MODEL_JSON_FILE = 'model/model_nocalmcorrupted_mfcc40.json'
-# MODEL_WEIGHTS_FILE = 'model/weights_training_mfcc40_nocalmcorrupted.hdf5'
+MODEL_JSON_FILE = 'model/model_nocalmcorrupted_mfcc40.json'
+MODEL_WEIGHTS_FILE = 'model/weights_training_mfcc40_nocalmcorrupted.hdf5'
 
-MODEL_JSON_FILE = 'model/model_nocalmcorrupted_mfcc40_dropout.json'
-MODEL_WEIGHTS_FILE = 'model/model_weights_nocalmcorrupted_mfcc40_dropout.h5'
+# MODEL_JSON_FILE = 'model/model_nocalmcorrupted_mfcc40_dropout.json'
+# MODEL_WEIGHTS_FILE = 'model/model_weights_nocalmcorrupted_mfcc40_dropout.h5'
 
 # Load the model from JSON file
 def load_model():

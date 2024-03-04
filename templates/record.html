@@ -4,77 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Record Audio</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body class="bg-light vh-100">
+    <div class="position-absolute top-0 start-0 m-4">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Home</a>
+    </div>
+    <div class="container d-flex flex-column align-items-center justify-content-center h-100">
+        <button id="startStopRecording" class="btn btn-info mb-2">Start Recording</button>
+        <div id="uploadStatus" class="mt-2"></div>
+        <audio id="audioPlayback" controls class="mb-2"></audio> <!-- Initially hidden -->
+        <button id="predictButton" class="btn btn-warning mb-2">Predict Emotion</button> <!-- Initially hidden -->
+        <div id="predictionStatus" class="mt-2"></div>
+        <div id="predictionResult" class="text-lg font-bold mb-4"></div>
+        <canvas id="emotionChart" class="w-full max-w-xl h-64"></canvas> <!-- Initially hidden -->
+    </div>
     <script defer src="{{ url_for('static', filename='js/record.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-
-    <style>
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px; /* Adjust space between form and chart */
-        }
-        
-        /* Adjusts the size of the chart container */
-        #emotionChart {
-            max-height: 300px; /* Set a maximum height */
-            width: 100%;
-            max-width: 600px; /* Set a maximum width */
-            margin: auto; /* Center the chart if the page width exceeds the max-width */
-        }
-        
-        /* Style adjustments for buttons for consistency */
-        .button {
-            background-color: #4CAF50; /* Green */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .button:hover {
-            background-color: #45a049;
-        }
-        
-        /* Additional responsiveness */
-        @media (max-width: 768px) {
-            #emotionChart {
-                max-height: 200px;
-            }
-        }
-    </style>
-
-</head>
-
-
-
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="absolute top-0 left-0 m-4">
-        <a href="{{ url_for('index') }}" class="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">Back to Home</a>
-    </div>
-    <div class="text-center">
-        <button id="startStopRecording" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Start Recording</button>
-        <!-- Add this inside your <div class="text-center">, below the recording and upload buttons -->
-        <div id="uploadStatus" class="mt-2"></div>
-        <button id="predictButton" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Predict Emotion</button>
-        <div id="predictionStatus" class="mt-2"></div>
-        <div id="predictionResult"></div>
-        <canvas id="emotionChart" width="400" height="400"></canvas>
-
-
-    <!-- <div id="uploadStatus" class="mt-4"></div>
-    <div id="phpOutput"></div> -->
-
-
-
-        <!-- Inside the body, after the Start/Stop Recording button -->
-        <!-- <button id="uploadButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hidden">Upload Recording</button> -->
-
-    </div>
 </body>
 </html>
