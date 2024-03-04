@@ -19,15 +19,13 @@ document.getElementById('uploadBtn').addEventListener('click', function() {
         .then(data => {
             updateUploadStatus('Finished uploading.', 'text-green-500');
             console.log('Upload successful:', data.filename);
-            // Update audio source for playback
             const audioPlayer = document.getElementById('audioPlayback');
             audioPlayer.src = URL.createObjectURL(audioFile);
-            audioPlayer.hidden = false;
-
-            // Show the "Predict" button
-            document.getElementById('predictBtn').hidden = false;
-
-            // Store the filename in sessionStorage for prediction
+            audioPlayer.classList.remove('hidden'); // Show the audio player
+            
+            const predictButton = document.getElementById('predictBtn');
+            predictButton.classList.remove('hidden'); // Show the predict button
+            
             sessionStorage.setItem('latestFile', data.filename);
         })
         .catch(error => {console.error('Error:', error);
